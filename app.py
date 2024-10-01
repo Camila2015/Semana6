@@ -5,6 +5,7 @@ import glob
 import cv2
 import numpy as np
 import pytesseract
+from PIL import Image
 from gtts import gTTS
 from googletrans import Translator
 
@@ -33,6 +34,7 @@ def remove_files(n):
 
 remove_files(7)
 
+# Cambiar el fondo a rosado
 st.markdown(
     """
     <style>
@@ -44,8 +46,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h1 style='color: pink;'>Reconocimiento Óptico de Caracteres</h1>", unsafe_allow_html=True)
-st.markdown("<h2 style='color: pink;'>Elige la fuente de la imágen, esta puede venir de la cámara o cargando un archivo</h2>", unsafe_allow_html=True)
+st.title("Reconocimiento Óptico de Caracteres")
+st.subheader("Elige la fuente de la imágen, esta puede venir de la cámara o cargando un archivo")
 
 cam_ = st.checkbox("Usar Cámara")
 
@@ -55,17 +57,16 @@ else:
     img_file_buffer = None
 
 with st.sidebar:
-    st.markdown("<h2 style='color: pink;'>Procesamiento para Cámara</h2>", unsafe_allow_html=True)
-    st.markdown("<span style='color: pink;'>Filtro para imagen con cámara</span>", unsafe_allow_html=True)
+    st.subheader("Procesamiento para Cámara")
     filtro = st.radio("Filtro para imagen con cámara", ('Sí', 'No'))
 
-bg_image = st.file_uploader("<span style='color: pink;'>Cargar Imagen:</span>", type=["png", "jpg"], unsafe_allow_html=True)
+bg_image = st.file_uploader("Cargar Imagen:", type=["png", "jpg"])
 if bg_image is not None:
     uploaded_file = bg_image
-    st.image(uploaded_file, caption='<span style="color: pink;">Imagen cargada.</span>', use_column_width=True, unsafe_allow_html=True)
+    st.image(uploaded_file, caption='Imagen cargada.', use_column_width=True)
     with open(uploaded_file.name, 'wb') as f:
         f.write(uploaded_file.read())
-    st.success(f"<span style='color: pink;'>Imagen guardada como {uploaded_file.name}</span>", unsafe_allow_html=True)
+    st.success(f"Imagen guardada como {uploaded_file.name}")
     img_cv = cv2.imread(f'{uploaded_file.name}')
     img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
     text = pytesseract.image_to_string(img_rgb)
@@ -83,7 +84,7 @@ if img_file_buffer is not None:
     st.write(text)
 
 with st.sidebar:
-    st.markdown("<h2 style='color: pink;'>Parámetros de traducción</h2>", unsafe_allow_html=True)
+    st.subheader("Parámetros de traducción")
     try:
         os.mkdir("temp")
     except:
@@ -91,23 +92,41 @@ with st.sidebar:
     translator = Translator()
 
     in_lang = st.selectbox(
-        "<span style='color: pink;'>Seleccione el lenguaje de entrada</span>",
+        "Seleccione el lenguaje de entrada",
         ("Ingles", "Español", "Bengali", "koreano", "Mandarin", "Japones"),
-        format_func=lambda x: f"<span style='color: pink;'>{x}</span>",
-        unsafe_allow_html=True
     )
-    input_language = {"Ingles": "en", "Español": "es", "Bengali": "bn", "koreano": "ko", "Mandarin": "zh-cn", "Japones": "ja"}[in_lang]
+    if in_lang == "Ingles":
+        input_language = "en"
+    elif in_lang == "Español":
+        input_language = "es"
+    elif in_lang == "Bengali":
+        input_language = "bn"
+    elif in_lang == "koreano":
+        input_language = "ko"
+    elif in_lang == "Mandarin":
+        input_language = "zh-cn"
+    elif in_lang == "Japones":
+        input_language = "ja"
 
     out_lang = st.selectbox(
-        "<span style='color: pink;'>Seleccione el lenguaje de salida</span>",
+        "Seleccione el lenguaje de salida",
         ("Ingles", "Español", "Bengali", "koreano", "Mandarin", "Japones"),
-        format_func=lambda x: f"<span style='color: pink;'>{x}</span>",
-        unsafe_allow_html=True
     )
-    output_language = {"Ingles": "en", "Español": "es", "Bengali": "bn", "koreano": "ko", "Chinese": "zh-cn", "Japones": "ja"}[out_lang]
+    if out_lang == "Ingles":
+        output_language = "en"
+    elif out_lang == "Español":
+        output_language = "es"
+    elif out_lang == "Bengali":
+        output_language = "bn"
+    elif out_lang == "koreano":
+        output_language = "ko"
+    elif out_lang == "Mandarin":
+        output_language = "zh-cn"
+    elif out_lang == "Japones":
+        output_language = "ja"
 
     english_accent = st.selectbox(
-        "<span style='color: pink;'>Seleccione el acento</span>",
+        "Seleccione el acento",
         (
             "Default",
             "India",
@@ -118,11 +137,24 @@ with st.sidebar:
             "Ireland",
             "South Africa",
         ),
-        format_func=lambda x: f"<span style='color: pink;'>{x}</span>",
-        unsafe_allow_html=True
     )
 
-    tld = {"Default": "com", "India": "co.in", "United Kingdom": "co.uk", "United States": "com", "Canada": "ca", "Australia": "com.au", "Ireland": "ie", "South Africa": "co.za"}[english_accent]
+    if english_accent == "Default":
+        tld = "com"
+    elif english_accent == "India":
+        tld = "co.in"
+    elif english_accent == "United Kingdom":
+        tld = "co.uk"
+    elif english_accent == "United States":
+        tld = "com"
+    elif english_accent == "Canada":
+        tld = "ca"
+    elif english_accent == "Australia":
+        tld = "com.au"
+    elif english_accent == "Ireland":
+        tld = "ie"
+    elif english_accent == "South Africa":
+        tld = "co.za"
 
     display_output_text = st.checkbox("Mostrar texto")
 
@@ -131,12 +163,13 @@ with st.sidebar:
             result, output_text = text_to_speech(input_language, output_language, text, tld)
             audio_file = open(f"temp/{result}.mp3", "rb")
             audio_bytes = audio_file.read()
-            st.markdown("<h2 style='color: pink;'>Tu audio:</h2>", unsafe_allow_html=True)
+            st.markdown("## Tu audio:")
             st.audio(audio_bytes, format="audio/mp3", start_time=0)
 
             if display_output_text:
-                st.markdown("<h2 style='color: pink;'>Texto de salida:</h2>", unsafe_allow_html=True)
+                st.markdown("## Texto de salida:")
                 st.write(f" {output_text}")
         else:
-            st.warning("<span style='color: pink;'>Por favor, ingrese un texto para convertir a audio.</span>", unsafe_allow_html=True)
+            st.warning("Por favor, ingrese un texto para convertir a audio.")
+
 
