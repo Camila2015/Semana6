@@ -5,7 +5,6 @@ import glob
 import cv2
 import numpy as np
 import pytesseract
-from PIL import Image
 from gtts import gTTS
 from googletrans import Translator
 
@@ -37,10 +36,10 @@ remove_files(7)
 st.markdown("<h1 style='color: pink;'>Reconocimiento Óptico de Caracteres</h1>", unsafe_allow_html=True)
 st.markdown("<h2 style='color: pink;'>Elige la fuente de la imágen, esta puede venir de la cámara o cargando un archivo</h2>", unsafe_allow_html=True)
 
-cam_ = st.checkbox("<span style='color: pink;'>Usar Cámara</span>", unsafe_allow_html=True)
+cam_ = st.checkbox("Usar Cámara")
 
 if cam_:
-    img_file_buffer = st.camera_input("<span style='color: pink;'>Toma una Foto</span>", unsafe_allow_html=True)
+    img_file_buffer = st.camera_input("Toma una Foto")
 else:
     img_file_buffer = None
 
@@ -115,9 +114,9 @@ with st.sidebar:
 
     tld = {"Default": "com", "India": "co.in", "United Kingdom": "co.uk", "United States": "com", "Canada": "ca", "Australia": "com.au", "Ireland": "ie", "South Africa": "co.za"}[english_accent]
 
-    display_output_text = st.checkbox("<span style='color: pink;'>Mostrar texto</span>", unsafe_allow_html=True)
+    display_output_text = st.checkbox("Mostrar texto")
 
-    if st.button("<span style='color: pink;'>Convertir</span>", unsafe_allow_html=True):
+    if st.button("Convertir"):
         if text.strip():
             result, output_text = text_to_speech(input_language, output_language, text, tld)
             audio_file = open(f"temp/{result}.mp3", "rb")
@@ -130,5 +129,6 @@ with st.sidebar:
                 st.write(f" {output_text}")
         else:
             st.warning("<span style='color: pink;'>Por favor, ingrese un texto para convertir a audio.</span>", unsafe_allow_html=True)
+
 
     
