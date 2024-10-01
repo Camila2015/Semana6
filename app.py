@@ -45,7 +45,8 @@ else:
 
 with st.sidebar:
     st.markdown("<h2 style='color: pink;'>Procesamiento para Cámara</h2>", unsafe_allow_html=True)
-    filtro = st.radio("<span style='color: pink;'>Filtro para imagen con cámara</span>", ('Sí', 'No'), unsafe_allow_html=True)
+    st.markdown("<span style='color: pink;'>Filtro para imagen con cámara</span>", unsafe_allow_html=True)
+    filtro = st.radio("Filtro para imagen con cámara", ('Sí', 'No'))
 
 bg_image = st.file_uploader("<span style='color: pink;'>Cargar Imagen:</span>", type=["png", "jpg"], unsafe_allow_html=True)
 if bg_image is not None:
@@ -63,10 +64,8 @@ if img_file_buffer is not None:
     bytes_data = img_file_buffer.getvalue()
     cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
 
-    if filtro == 'Con Filtro':
+    if filtro == 'Sí':
         cv2_img = cv2.bitwise_not(cv2_img)
-    else:
-        cv2_img = cv2_img
 
     img_rgb = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
     text = pytesseract.image_to_string(img_rgb)
@@ -130,5 +129,3 @@ with st.sidebar:
         else:
             st.warning("<span style='color: pink;'>Por favor, ingrese un texto para convertir a audio.</span>", unsafe_allow_html=True)
 
-
-    
